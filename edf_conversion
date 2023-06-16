@@ -1,0 +1,49 @@
+# libraries
+import numpy as np
+import mne
+import glob
+import os
+
+
+
+# trial for a single EDF
+
+'''
+edf = mne.io.read_raw_edf('/Users/naenugu/Downloads/S001R01.edf')
+header = ','.join(edf.ch_names)
+np.savetxt('/Users/naenugu/Downloads/trialEDF.csv', edf.get_data().T, delimiter = ',', header = header)
+'''
+
+# folder locations
+edf_folder = '/Users/naenugu/NEL/data/original_files'
+csv_folder = '/Users/naenugu/NEL/data/csv_files'
+edf_subfolders = next(os.walk(edf_folder))[1]
+
+
+# processing each EDF
+
+'''
+for each_file in edf_files:
+    if each_file.endswith('.edf'):
+        edf = mne.io.read_raw_edf(each_file)
+        csv = os.path.join(csv_folder, os.path.splitext(os.path.basename(each_file))[0] + '.csv')
+    
+        header = '.'.join(edf.ch_names)
+        np.savetxt(csv, edf.get_data().T, delimiter = ',', header=header)
+
+'''
+
+for subfolder in edf_subfolders:
+    subfolder_path = os.path.join(edf_folder, subfolder)
+    csv_subfolder_path = os.path.join(csv_folder, subfolder)
+    os.makedirs(csv_subfolder_path, exist_ok=True)  # corresponding CSV folder
+    
+    # List EDF files in the subfolder
+    edf_files = glob.glob(os.path.join(subfolder_path, '*.edf'))
+    
+    # Process each EDF file in the subfolder
+    for edf_file in edf_files:
+        edf = mne.io.read_raw_edf(edf_file)
+        csv_file = os.path.join(csv_subfolder_path, os.path.splitext(os.path.basename(edf_file))[0] + '.csv')
+        header = ','.join(edf.ch_names)
+        np.savetxt(csv_file, edf.get_data().T, delimiter = ',', header=header)
